@@ -10,6 +10,7 @@ func InitRouter(r *gin.Engine) {
 
 	video := bili.Group("video")
 	video.GET("all", handles.VideoAll)
+	video.GET("get-mid", handles.VideoBySubscription)
 
 	subscription := bili.Group("subscription")
 	subscription.GET("all", handles.SubscriptAll)

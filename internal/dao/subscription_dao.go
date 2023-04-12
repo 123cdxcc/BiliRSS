@@ -18,6 +18,10 @@ func (dao *subscriptionDao) GetAll() (list []*model.Subscription, err error) {
 	err = dao.db().Find(&list).Error
 	return
 }
+func (dao subscriptionDao) GetByMid(mid int64) (subscription *model.Subscription, err error) {
+	err = dao.db().Where("mid=?", mid).Find(&subscription).Error
+	return
+}
 func (dao *subscriptionDao) Insert(s *model.Subscription) error {
 	return dao.db().Create(&s).Error
 }

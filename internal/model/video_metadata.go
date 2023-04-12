@@ -5,6 +5,7 @@ type Video struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Author      string `json:"author"`
+	Head        string `json:"head"`
 	Length      string `json:"length"`
 	Aid         string `json:"aid"`
 	BvId        string `json:"bv_id"`

@@ -56,6 +56,7 @@ func VideoAll(c *gin.Context) {
 			for _, video := range videoList { // 循环查询查到的视频
 				wait.Add(1)
 				go func(video *model.Video) { // 开启协程查询视频直链
+					video.Head = subscription.Pic
 					cid, err := bili.Bili.AidToCid(video.Aid)
 					if err != nil {
 						wait.Done()
@@ -76,6 +77,59 @@ func VideoAll(c *gin.Context) {
 			}
 			wait.Done()
 		}(subscription)
+	}
+	wait.Wait()
+	common.SuccessResp(c, videoMetadata)
+}
+func VideoBySubscription(c *gin.Context) {
+	mid, err := common.GetQueryInt(c, "mid")
+	if err != nil {
+		common.ErrorResp(c, err)
+		return
+	}
+	page, err := common.GetQueryInt(c, "page")
+	if err != nil {
+		common.ErrorResp(c, err)
+		return
+	}
+	count, err := common.GetQueryInt(c, "count")
+	if err != nil {
+		common.ErrorResp(c, err)
+		return
+	}
+	wait := &sync.WaitGroup{}
+	videoMetadata := make([]*model.Video, 0, count)
+	subscription, err := dao.SubscriptionDao.GetByMid(int64(mid))
+	if err != nil {
+		common.ErrorResp(c, err)
+		return
+	}
+	videoList, err := bili.Bili.VideoList(subscription.Mid, page, count)
+	if err != nil {
+		common.ErrorResp(c, err)
+		return
+	}
+	for _, video := range videoList { // 循环查询查到的视频
+		wait.Add(1)
+		go func(video *model.Video) { // 开启协程查询视频直链
+			video.Head = subscription.Pic
+			cid, err := bili.Bili.AidToCid(video.Aid)
+			if err != nil {
+				wait.Done()
+				fmt.Println(err)
+				return
+			}
+			video.Cid = cid
+			url, err := bili.Bili.DownloadUrl(video.Aid, cid, 80)
+			if err != nil {
+				wait.Done()
+				fmt.Println(err)
+				return
+			}
+			video.DownloadUrl = url
+			videoMetadata = append(videoMetadata, video)
+			wait.Done()
+		}(video)
 	}
 	wait.Wait()
 	common.SuccessResp(c, videoMetadata)
