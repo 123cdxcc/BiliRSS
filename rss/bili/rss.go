@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type bili struct {
@@ -38,8 +39,8 @@ func (b *bili) SubscriptionInfo(mid int64) (*model.Subscription, error) {
 	if err != nil {
 		return nil, err
 	}
-	data := utils.Json.Get(res, "data")
-	fmt.Println(data.Get("face").ToString())
+	resStr := strings.ReplaceAll(string(res), "{\"code\":-509,\"message\":\"请求过于频繁，请稍后再试\",\"ttl\":1}", "")
+	data := utils.Json.Get([]byte(resStr), "data")
 	name := data.Get("name").ToString()
 	pic := data.Get("face").ToString()
 	return &model.Subscription{

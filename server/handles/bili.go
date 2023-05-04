@@ -153,6 +153,7 @@ func Add(c *gin.Context) {
 		common.ErrorResp(c, err)
 		return
 	}
+	fmt.Printf("%#v", subscription)
 	subscription.ShareUrl = s.ShareUrl
 	err = service.SubscriptionService.Insert(subscription)
 	if err != nil {
