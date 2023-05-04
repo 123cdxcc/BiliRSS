@@ -1,8 +1,8 @@
 package handles
 
 import (
-	"bilibiliRSS/internal/dao"
 	"bilibiliRSS/internal/model"
+	"bilibiliRSS/internal/service"
 	"bilibiliRSS/rss/bili"
 	"bilibiliRSS/server/common"
 	"errors"
@@ -33,7 +33,7 @@ func VideoAll(c *gin.Context) {
 		common.ErrorResp(c, errors.New("参数错误"))
 		return
 	}
-	subscriptions, err := dao.SubscriptionDao.GetAll()
+	subscriptions, err := service.SubscriptionService.GetAll()
 	if err != nil {
 		common.ErrorResp(c, errors.New("获取数据错误"))
 		return
@@ -99,7 +99,7 @@ func VideoBySubscription(c *gin.Context) {
 	}
 	wait := &sync.WaitGroup{}
 	videoMetadata := make([]*model.Video, 0, count)
-	subscription, err := dao.SubscriptionDao.GetByMid(int64(mid))
+	subscription, err := service.SubscriptionService.GetByMid(int64(mid))
 	if err != nil {
 		common.ErrorResp(c, err)
 		return
@@ -154,7 +154,7 @@ func Add(c *gin.Context) {
 		return
 	}
 	subscription.ShareUrl = s.ShareUrl
-	err = dao.SubscriptionDao.Insert(subscription)
+	err = service.SubscriptionService.Insert(subscription)
 	if err != nil {
 		common.ErrorResp(c, err)
 		return
@@ -162,7 +162,7 @@ func Add(c *gin.Context) {
 	common.SuccessResp(c, subscription)
 }
 func SubscriptAll(c *gin.Context) {
-	subscriptions, err := dao.SubscriptionDao.GetAll()
+	subscriptions, err := service.SubscriptionService.GetAll()
 	if err != nil {
 		common.ErrorResp(c, err)
 		return

@@ -39,6 +39,7 @@ func (b *bili) SubscriptionInfo(mid int64) (*model.Subscription, error) {
 		return nil, err
 	}
 	data := utils.Json.Get(res, "data")
+	fmt.Println(data.Get("face").ToString())
 	name := data.Get("name").ToString()
 	pic := data.Get("face").ToString()
 	return &model.Subscription{

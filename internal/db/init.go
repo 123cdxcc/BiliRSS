@@ -13,7 +13,7 @@ func init() {
 	if err != nil {
 		panic("连接数据库失败")
 	}
-	err = db.AutoMigrate(&model.Subscription{})
+	err = db.AutoMigrate(&model.Subscription{}, &model.User{}, &model.UserSubscription{})
 	if err != nil {
 		panic("初始化数据表失败")
 	}
